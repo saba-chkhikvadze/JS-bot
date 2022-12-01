@@ -1,6 +1,7 @@
 from discord.ext import commands
 import youtube_dl
 import discord
+from discord.utils import get
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -41,6 +42,7 @@ async def make_source(url : str):
 async def on_ready():
     print('js bot running')
 
+
 async def foo():
     print('done')
 @commands.command()
@@ -48,8 +50,11 @@ async def play(ctx, title: str):
     vc = ctx.guild.voice_client
     server_id = ctx.guild.id
     channel = ctx.author.voice.channel
+    myself = get(client.get_all_members(), id = client.user.id)
+    
     if vc is None or not vc.is_connected():
         await channel.connect()
+        await myself.edit(deafen=True)
     vc = ctx.guild.voice_client
     url, video_title = search_video(title)
     if vc.is_playing():  
@@ -107,7 +112,9 @@ client.add_command(pause)
 @commands.command()
 async def stop(ctx):
     vc = ctx.guild.voice_client
+    server_id = ctx.guild.id
     if vc.is_playing() or vc.is_paused():
+        queues[server_id] = []
         vc.stop()
     else:
         await ctx.send('არ არის მუსიკა ჩართული') 
@@ -129,7 +136,7 @@ async def leave(ctx):
     await ctx.send('მაგრად')
 
 client.add_command(leave)
-TOKEN = 'YOUR TOKEN HERE'
+TOKEN = 'ODk2MzYxNzg4NDIwMDA1ODg5.GJhf8o.tmSjYlAccB3Tma9xhLqipYzssnV8A5OIWss2dE'
 client.run(TOKEN)
 
 
